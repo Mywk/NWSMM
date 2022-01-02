@@ -1,0 +1,109 @@
+﻿<!--
+    Copyright (C) 2021 - Mywk.Net
+    Licensed under the EUPL, Version 1.2
+    You may obtain a copy of the Licence at: https://joinup.ec.europa.eu/community/eupl/og_page/eupl
+    Unless required by applicable law or agreed to in writing, software distributed under the Licence is distributed on an "AS IS" basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+-->
+<Window x:Class="NWSMM.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:NWSMM"
+        xmlns:wpf="clr-namespace:Microsoft.Web.WebView2.Wpf;assembly=Microsoft.Web.WebView2.Wpf"
+        mc:Ignorable="d" Topmost="True" Opacity="0.87" Foreground="White" Loaded="MainWindow_OnLoaded" LocationChanged="MainWindow_OnLocationChanged" SizeChanged="Window_SizeChanged"
+        Title="NWSMM" MinWidth="320" MinHeight="260" Height="480" Width="480" WindowStyle="None" AllowsTransparency="True" ResizeMode="CanResizeWithGrip" MouseDown="TopUIElement_OnMouseDown" Background="Transparent" >
+    <Border BorderThickness="2" Name="MainBorder" CornerRadius="10" Background="Black">
+        <Border.Resources>
+            <!-- Button Style -->
+            <Style TargetType="{x:Type Button}" >
+                <Setter Property="Background" Value="Green"/>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type Button}">
+                            <Border BorderBrush="DarkGray" BorderThickness="1" CornerRadius="4" >
+                                <Border Background="{TemplateBinding Background}" CornerRadius="4" BorderBrush="Transparent" BorderThickness="1">
+                                    <ContentPresenter Margin="0 -1 0 0" HorizontalAlignment="Center" VerticalAlignment="Top"/>
+                                </Border>
+                            </Border>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+                <Style.Triggers>
+                    <Trigger Property="IsMouseOver" Value="True">
+                        <Setter Property="Background" Value="White"/>
+                        <Setter Property="Foreground" Value="Black"/>
+                    </Trigger>
+                    <Trigger Property="IsMouseOver" Value="False">
+                        <Setter Property="Background" Value="Black"/>
+                        <Setter Property="Foreground" Value="White"/>
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+        </Border.Resources>
+        <Grid>
+            <Grid Margin="5 1 5 5" >
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto"  />
+                </Grid.RowDefinitions>
+
+                <Grid Grid.Row="0" Visibility="Visible" Name="MainGrid" Background="Black" VerticalAlignment="Center">
+                    <Button Name="HideToggleButton" ToolTip="Toggle UI" Content="▼" Click="HideToggleButton_OnClick" Width="20" Height="20" HorizontalAlignment="Right" Margin="0 0 24 0" />
+                    <Label ToolTip="Move" Content="⬢" Foreground="Black" Background="Transparent" Width="20" Height="24" HorizontalAlignment="Right" Margin="0 1 0 0" FontSize="12" />
+                    <Label ToolTip="Move" Content="⬢" Foreground="White" Background="Transparent" Width="20" Height="24" HorizontalAlignment="Right" Margin="0 -3 2 0" FontSize="12" />
+
+                    <Grid HorizontalAlignment="Stretch" Name="UiGrid" >
+                        <Label ToolTip="Move" MouseDoubleClick="MoveLabel_OnMouseDoubleClick" Content="⬢" Foreground="White" Background="Transparent" Width="20" Height="24" HorizontalAlignment="Right" Margin="0 1 67 0" FontSize="12" />
+                        <Button Name="OnOffToggleButton" Content="⬤" ToolTip="Toggle ON/OFF" Click="OnOffToggleButton_OnClick" Width="20" Height="20" HorizontalAlignment="Left" />
+                        <StackPanel VerticalAlignment="Center" HorizontalAlignment="Stretch" Margin="20 0 80 0" Orientation="Horizontal">
+                            <Slider Value="87" ToolTip="Opacity" Name="OpacitySlider" ValueChanged="OpacitySlider_OnValueChanged" Minimum="40" Maximum="100" VerticalAlignment="Bottom" Width="50" Margin="0 0 0 4" />
+                            <Label Cursor="Hand" Margin="0 0 0 0" MouseLeftButtonDown="InfoLabel_OnMouseLeftButtonDown" Name="InfoLabel" FontSize="9" Content="Hello there fellow programmer!" VerticalAlignment="Center" HorizontalAlignment="Center" >
+                                <Label.Style>
+                                    <Style TargetType="Label">
+                                        <Setter Property="Foreground" Value="LightSteelBlue" />
+                                        <Style.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter Property="Foreground" Value="GhostWhite" />
+                                            </Trigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Label.Style>
+                            </Label>
+                        </StackPanel>
+                        <Button Name="ResizeButton" Content="🗚" ToolTip="Toggle Size" Click="ResizeButton_OnClick" Width="20" Height="20" HorizontalAlignment="Right" Margin="0 0 48 0" />
+                        <Button Content="X" ToolTip="Close" Click="CloseButton_OnClick" Width="20" Height="20" HorizontalAlignment="Right" />
+                    </Grid>
+                </Grid>
+
+                <Grid Name="WebViewGrid" Grid.Row="1" Margin="0" Background="Black"  >
+                    <Label Name="LoadingLabel" Content="Loading.." Foreground="White" VerticalAlignment="Center" HorizontalAlignment="Center" />
+                    <!--<Image Name="MapImage" SizeChanged="MapImage_OnSizeChanged" />-->
+                    <wpf:WebView2 Visibility="Hidden" Name="WebView" NavigationCompleted="WebView_OnNavigationCompleted" />
+                </Grid>
+
+                    <Grid Grid.Row="2" Visibility="Collapsed" Name="DebugGrid" Background="White" >
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="0" />
+                        <RowDefinition Height="0" />
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="*"  />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <Image Grid.Row="3" Name="CapturePreview" Height="30" Margin="0 5 0 5" />
+
+                    <TextBox Name="LogTextBox" Grid.Row="4" Height="100" HorizontalAlignment="Stretch"  Margin="0" />
+                </Grid>
+            </Grid>
+
+            <Canvas Name="ResizeGripCanvas" VerticalAlignment="Bottom" HorizontalAlignment="Right" Background="Black" Height="20" Width="20" Margin="0 0 -5 -5" />
+            <ResizeGrip Height="10" VerticalAlignment="Bottom" DockPanel.Dock="Bottom" />
+
+        </Grid>
+    </Border>
+</Window>
