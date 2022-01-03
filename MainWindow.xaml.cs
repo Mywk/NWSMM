@@ -176,24 +176,32 @@ namespace NWSMM
 
             // We attempt this three times, first with the original bitmap
             validPosition = _positionTracker.PositionFromText(_ocr.ProcessImageToText(bmp));
+            int debugValidPosition = 0;
 
             if (validPosition == default)
             {
-                // Second attempt
-                _ocr.BitmapPreProcessingByThreshold(bmp, Color.FromArgb(255, 253, 228), 15000);
-                validPosition = _positionTracker.PositionFromText(_ocr.ProcessImageToText(bmp));
+                // Second attempt - no need to clone it as we no longer attempt this a third time
+                //bmp = original.Clone(new Rectangle(0, 0, original.Width, original.Height), original.PixelFormat);
+                //_ocr.BitmapPreProcessingByColorMatch(bmp, 165, 150, 130, 255, 255, 255);
+                _ocr.BitmapPreProcessingByYellowRange(bmp, 10);
 
-                if (validPosition == default)
-                {
-                    // Third attempt
-                    bmp = original.Clone(new Rectangle(0, 0, original.Width, original.Height), original.PixelFormat);
-                    _ocr.BitmapPreProcessingByColorMatch(bmp, 160, 140, 100, 255, 255, 255);
-                    validPosition = _positionTracker.PositionFromText(_ocr.ProcessImageToText(bmp));
-                }
+                validPosition = _positionTracker.PositionFromText(_ocr.ProcessImageToText(bmp));
+                debugValidPosition++;
             }
 
+
+            // Debug stuff
+            double tempX = validPosition.X;
+            double tempY = validPosition.Y;
+
             if (validPosition != default && validPosition != _lastPosition)
-                isValid = _positionTracker.UpdatePosition(validPosition);
+                isValid = _positionTracker.UpdatePosition(ref validPosition);
+
+            // Debug stuff
+            if (_isDebugMode && isValid && ((validPosition.X > 11000 || validPosition.Y > 10000) || (Math.Abs(_lastPosition.X - validPosition.X) > 30 || Math.Abs(_lastPosition.Y - validPosition.Y) > 30)))
+            {
+                int x = 0;
+            }
 
             // Update _mapImageCache if the position is correct
             if (isValid)
@@ -228,13 +236,8 @@ namespace NWSMM
                    if (CapturePreview.Source != null)
                        CapturePreview.Source = null;
 
-                   if (isValid)
-                   {
-                       CapturePreview.Source = _ocr.BitmapToBitmapImage(bmp);
-                       AddToLog(validPosition.ToString());
-                   }
-                   else
-                       CapturePreview.Source = null;
+                   CapturePreview.Source = _ocr.BitmapToBitmapImage(bmp);
+                   AddToLog((isValid ? "V" : "I") + debugValidPosition + ":" + validPosition.ToString());
                });
             }
 

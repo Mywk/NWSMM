@@ -3,6 +3,7 @@
  * You may obtain a copy of the Licence at: https://joinup.ec.europa.eu/community/eupl/og_page/eupl
  * Unless required by applicable law or agreed to in writing, software distributed under the Licence is distributed on an "AS IS" basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  */
+using System;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
@@ -80,6 +81,53 @@ namespace NWSMM
 
                     // Compare it against the threshold
                     if (r >= rMin && g >= gMin && b >= bMin && r <= rMax && g <= gMax && b <= bMax)
+                        *p = nonTargetColor;
+                    else
+                        *p = targetColor;
+                }
+
+                // Unlock the bitmap
+                bmp.UnlockBits(data);
+            }
+        }
+
+
+        /// <summary>
+        /// Processes a bitmap to yellow with the given range, changing everything within the threshold to black and the remaining of the bitmap to white
+        /// </summary>
+        /// <param name="bmp"></param>
+        /// <param name="range"></param>
+        public void BitmapPreProcessingByYellowRange(Bitmap bmp, int range)
+        {
+            var targetColor = Color.FromArgb(0, 0, 0).ToArgb();
+            var nonTargetColor = Color.FromArgb(255, 255, 255).ToArgb();
+
+            // Lock the array for direct access
+            var data = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadWrite, PixelFormat.Format32bppPArgb);
+
+            unsafe
+            {
+                // Store the length so we don't have to recalculate it
+                var length = (int*)data.Scan0 + bmp.Height * bmp.Width;
+
+                for (var p = (int*)data.Scan0; p < length; p++)
+                {
+                    // Get the rgb values
+                    var r = ((*p >> 16) & 255);
+                    var g = ((*p >> 8) & 255);
+                    var b = ((*p >> 0) & 255);
+
+                    // Convert RGB to HSL
+                    Color c = Color.FromArgb(255, r, g, b);
+
+                    float hueC = c.GetHue();
+                    float e = 1.5f * range;
+                    float hueY = Color.Yellow.GetHue();
+                    float delta = hueC - hueY;
+                    bool ok = Math.Abs(delta) < e;
+
+                    // Compare it against the threshold
+                    if (ok)
                         *p = nonTargetColor;
                     else
                         *p = targetColor;

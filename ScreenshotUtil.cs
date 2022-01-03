@@ -46,10 +46,10 @@ namespace NWSMM
             return ptr;
         }
 
-        private const int _xOffset = 265;
-        private const int _yOffset = 20;
-        private const int _posWidth = 277;
-        private const int _posHeight = 16;
+        private const int XOffset = 267;
+        private const int YOffset = 20;
+        private const int PosWidth = 187;
+        private const int PosHeight = 16;
 
         public static Bitmap GetScreenshot(ScreenshotType screenshotType)
         {
@@ -67,12 +67,12 @@ namespace NWSMM
                 if (screenshotType == ScreenshotType.Position)
                 {
                     // Width and Height set by percentage of the screen size
-                    screenX = windowPosition.Right - _xOffset;
-                    screenY = _yOffset;
+                    screenX = windowPosition.Right - XOffset;
+                    screenY = YOffset;
                 }
 
                 //Create a new bitmap.
-                Bitmap original = new Bitmap((int)_posWidth, (int)_posHeight);
+                Bitmap original = new Bitmap((int)PosWidth, (int)PosHeight);
 
                 // Create a graphics object from the bitmap.
                 var gfxScreenshot = Graphics.FromImage(original);

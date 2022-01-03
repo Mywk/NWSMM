@@ -44,12 +44,12 @@ namespace NWSMM
         }
 
         // Invalidate the previous position after X false positions (eg. Teleport)
-        private const int MaxCounter = 40;
+        private const int MaxCounter = 50;
 
         private float _lastX;
         private float _lastY;
         private DateTime _lastValidPosition = DateTime.Now;
-        private int _invalidPositionCounter = int.MaxValue;
+        private int _invalidPositionCounter = MaxCounter;
 
         /// <summary>
         /// Pre-process a position from the given text without updating the position
@@ -86,7 +86,7 @@ namespace NWSMM
         /// <param name="position"></param>
         /// <remarks>Some if the calculations were kindly copied from NewWorldMinimap since it saves me a bit of time</remarks>
         /// <returns>True if the position is valid and was updated</returns>
-        public bool UpdatePosition(Vector2 position)
+        public bool UpdatePosition(ref Vector2 position)
         {
             float x = position.X;
             float y = position.Y;
