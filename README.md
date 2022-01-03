@@ -8,13 +8,19 @@ The positioning is not perfect, it uses [OCR](https://en.wikipedia.org/wiki/Opti
 There's a lot of room for improvement, that being said:
 Feel free to improve on it and I will review the submitted changes as quick as possible.
 
-[More information, download, demo and FAQ can be found here.](https://mywk.net/software/iprint-utility)
+[More information, download, demo and FAQ can be found here.](https://mywk.net/software/newworld-standalone-minimap)
+
+[![NWSMM](https://mywk.net/images/content/newworldstandaloneminimap.png)](https://mywk.net/software/newworld-standalone-minimap)
 
 #### Requirements
 [.NET Core 3.1](https://dotnet.microsoft.com/en-us/download/dotnet/3.1/runtime)
+
 [WebView2](https://developer.microsoft.com/en-us/microsoft-edge/webview2/#download-section)
 
 ### Changelog
+
+###### Version 0.6.6
+- Slightly better image pre-processing for OCR
 
 ###### Version 0.6.4
 
